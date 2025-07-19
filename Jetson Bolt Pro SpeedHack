@@ -1,0 +1,45 @@
+#include <SoftwareSerial.h>
+
+#define TARGET_SPEED_KMPH 30
+
+SoftwareSerial mySerial(2, 3);
+
+byte bA[] = {0xaa, 0x06, 0x06, TARGET_SPEED_KMPH, 0x00, 0xbb};
+byte headlightsOn[] = {0xaa, 0x07, 0x06, 0x01, 0xaa, 0xbb};
+byte headlightsOff[] = {0xaa, 0x07, 0x06, 0x00, 0xab, 0xbb};
+
+void setup()
+{ 
+  Serial.begin(115200);
+  while (!Serial) { ; }
+  mySerial.begin(115200);
+
+  bA[3] = TARGET_SPEED_KMPH;
+  int SizeOfArray = sizeof(bA) / sizeof(bA[0]);
+  bA[4] = checkSum(bA, SizeOfArray);
+
+  delay(500);
+  for(int i = 0; i < SizeOfArray; i++)
+    mySerial.write(headlightsOn[i]);
+  delay(500);
+  for(int i = 0; i < SizeOfArray; i++)
+    mySerial.write(headlightsOff[i]);
+  delay(250);
+  for(int i = 0; i < SizeOfArray; i++)
+    mySerial.write(bA[i]);
+  delay(250);
+  for(int i = 0; i < SizeOfArray; i++)
+    mySerial.write(headlightsOn[i]);
+  delay(500);
+  for(int i = 0; i < SizeOfArray; i++)
+    mySerial.write(headlightsOff[i]);
+}
+
+byte checkSum(byte byteArray[], int arraySize) {
+  byte checksum = 0x00;
+  for(int i = 0; i < arraySize - 2; i++)
+    checksum ^= byteArray[i];
+  return checksum;
+}
+
+void loop() {}

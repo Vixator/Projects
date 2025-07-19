@@ -1,0 +1,59 @@
+using UnityEngine;
+using UnityEngine.AI;
+
+public class MonsterBehaviour : MonoBehaviour
+{
+    public Transform player;
+
+    public float WanderSpeed = 3f;
+    public float StalkSpeed = 4f;
+    public float ChaseSpeed = 8f;
+
+    public float WanderDistance = 30f;
+    public float StalkDistance = 20f;
+    public float ChaseDistance = 10f;
+
+    private NavMeshAgent agent;
+
+    void Start()
+    {
+        agent = GetComponent<NavMeshAgent>();
+    }
+
+    void Update()
+    {
+        float distance = Vector3.Distance(player.position, transform.position);
+
+        if (distance < WanderDistance && distance > StalkDistance)
+        {
+            agent.speed = StalkSpeed;
+            agent.SetDestination(player.position);
+        }
+        else if (distance < StalkDistance && distance > ChaseDistance)
+        {
+            agent.speed = StalkSpeed;
+            agent.SetDestination(player.position);
+        }
+        else if (distance < ChaseDistance)
+        {
+            agent.speed = ChaseSpeed;
+            agent.SetDestination(player.position);
+        }
+        else
+        {
+            agent.speed = WanderSpeed;
+            Vector3 newPos = RandomNavSphere(transform.position, WanderDistance, -1);
+            agent.SetDestination(newPos);
+        }
+    }
+    public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
+    {
+        Vector3 randDirection = Random.insideUnitSphere * dist;
+        randDirection += origin;
+
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
+
+        return navHit.position;
+    }
+}

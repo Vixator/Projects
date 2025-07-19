@@ -1,1 +1,1 @@
-Hover over the "Add files via upload" text to see short descriptions for each project.
+Hover over the text next to my name in each project to see short descriptions for each project.

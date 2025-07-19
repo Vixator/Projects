@@ -1,0 +1,12 @@
+const https = require('https');
+const ip = '8.8.8.8';
+https.get(`https://ip-api.com/json/${ip}`, (res) => {
+  let data = '';
+  res.on('data', (chunk) => data += chunk);
+  res.on('end', () => {
+    const info = JSON.parse(data);
+    console.log(info);
+  });
+}).on('error', (err) => {
+  console.error(err.message);
+});
